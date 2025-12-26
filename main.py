@@ -1,5 +1,5 @@
 """
-Main entry point for the AI Art Project.
+Main entry point for VisionVerse.
 This script orchestrates the complete workflow from image capture to art generation.
 """
 

@@ -1,4 +1,4 @@
-# AI Art Project
+# VisionVerse
 
 An AI-powered art generation pipeline that transforms captured images into artistic creations through poetry and Stable Diffusion.
 
@@ -32,7 +32,7 @@ This project creates a complete workflow from image capture to AI-generated art:
 1. Clone the repository:
 ```bash
 git clone <your-repo-url>
-cd "AI-Art Project"
+cd VisionVerse
 ```
 
 2. Create a virtual environment:
@@ -90,7 +90,7 @@ Edit `config.py` to customize:
 ### File Structure
 
 ```
-AI-Art Project/
+VisionVerse/
 ├── photo_to_poetry.py    # Main script
 ├── config.py              # Configuration file
 ├── download_success_test.py  # BLIP model test script
@@ -98,6 +98,7 @@ AI-Art Project/
 ├── art_style.txt          # List of art styles
 ├── requirements.txt       # Python dependencies
 ├── README.md             # This file
+├── LICENSE               # License file
 ├── .gitignore            # Git ignore rules
 └── output/               # Generated images and logs
 ```
