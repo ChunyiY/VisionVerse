@@ -1,159 +1,203 @@
 # VisionVerse
 
-An AI-powered art generation pipeline that transforms captured images into artistic creations through poetry and Stable Diffusion.
+A production-ready AI pipeline that transforms visual input into artistic creations through multi-modal understanding, poetry generation, and diffusion-based image synthesis.
 
 ## Overview
 
-This project creates a complete workflow from image capture to AI-generated art:
+VisionVerse implements an end-to-end workflow that bridges computer vision, natural language processing, and generative AI. The system processes captured images through multiple stages: visual understanding via BLIP, semantic keyword extraction using CLIP embeddings, poetry generation with Ollama, and final artwork creation using Stable Diffusion with historical art style conditioning.
 
-1. **Image Capture**: Captures images from your camera
-2. **Image Understanding**: Uses BLIP (Bootstrapping Language-Image Pre-training) to generate captions
-3. **Poetry Generation**: Creates poetry based on the image using Ollama
-4. **Art Style Selection**: Selects from 100+ historical art styles
-5. **Art Generation**: Generates artistic images using Stable Diffusion
+## Architecture
+
+The pipeline consists of four primary stages:
+
+1. **Image Capture & Understanding**: Camera-based image acquisition with BLIP-based caption generation
+2. **Semantic Analysis**: CLIP-encoded semantic matching for keyword extraction from a curated word bank
+3. **Poetry Generation**: Context-aware poetry synthesis using Ollama's language models
+4. **Art Generation**: Stable Diffusion-based image synthesis with 100+ historical art style conditioning
 
 ## Features
 
-- 🎨 **100+ Art Styles**: From Prehistoric Cave Art to Contemporary Digital Art
-- 📸 **Camera Integration**: Direct image capture from webcam
-- 🧠 **Semantic Matching**: Uses CLIP to find semantically relevant keywords
-- ✍️ **Poetry Generation**: Creates contextual poetry using Ollama
-- 🖼️ **AI Art Generation**: High-quality image generation with Stable Diffusion
-- 💾 **Result Logging**: Saves all generations with timestamps
+- **Multi-Modal Processing**: Integrates vision-language models (BLIP) and text encoders (CLIP) for semantic understanding
+- **Historical Art Styles**: Comprehensive library of 100+ art styles spanning from prehistoric to contemporary digital art
+- **Semantic Keyword Matching**: CLIP-based cosine similarity for contextually relevant keyword selection
+- **Configurable Pipeline**: Modular architecture supporting custom word banks, art styles, and model configurations
+- **Production Logging**: Timestamped output logging with complete generation metadata
 
 ## Requirements
 
-- Python 3.8+
-- CUDA-capable GPU (recommended) or Apple Silicon (MPS) or CPU
-- [Ollama](https://ollama.ai/) installed with the `mistral` model
+- Python 3.8 or higher
+- CUDA-capable GPU (recommended), Apple Silicon (MPS), or CPU
+- [Ollama](https://ollama.ai/) runtime with Mistral model installed
+- Minimum 8GB GPU memory for Stable Diffusion inference
 
 ## Installation
 
-1. Clone the repository:
+### 1. Clone Repository
+
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/ChunyiY/VisionVerse.git
 cd VisionVerse
 ```
 
-2. Create a virtual environment:
+### 2. Create Virtual Environment
+
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-3. Install dependencies:
+### 3. Install Dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Install Ollama and download the mistral model:
+### 4. Install Ollama and Models
+
 ```bash
 # Install Ollama from https://ollama.ai/
 ollama pull mistral
 ```
 
-5. Download required models (will be downloaded automatically on first run):
-   - BLIP image captioning model
-   - CLIP text encoder
-   - Stable Diffusion v1.5
+### 5. Model Downloads
+
+The following models are automatically downloaded on first execution:
+- BLIP Image Captioning (Salesforce/blip-image-captioning-base)
+- CLIP Text Encoder (openai/clip-vit-base-patch32)
+- Stable Diffusion v1.5 (runwayml/stable-diffusion-v1-5)
 
 ## Usage
 
-### Basic Usage
+### Basic Execution
 
-Run the main script (either entry point works):
 ```bash
-python main.py
-```
-or
-```bash
-python photo_to_poetry.py
+python src/main.py
 ```
 
-The script will:
-1. Prompt you to optionally add a word to the word bank
-2. Capture an image from your camera
-3. Generate a caption using BLIP
-4. Find semantically relevant keywords
-5. Generate poetry using Ollama
-6. Convert poetry to a Stable Diffusion prompt
-7. Generate the final artwork
-8. Save all results to the `output/` directory
+Alternatively:
+
+```bash
+python -m src.photo_to_poetry
+```
+
+### Execution Flow
+
+1. Optional word bank expansion via interactive prompt
+2. Camera image capture (attempts cameras 0-2)
+3. BLIP-based image caption generation
+4. CLIP semantic matching for keyword extraction
+5. Ollama poetry generation with contextual keywords
+6. Art style selection and prompt construction
+7. Stable Diffusion image synthesis
+8. Results saved to `output/` directory with timestamped metadata
 
 ### Configuration
 
-Edit `config.py` to customize:
-- Output directory
-- Device (cuda/mps/cpu)
-- Model ID
+Modify `config/config.py` for:
+- Output directory paths
+- Device selection (cuda/mps/cpu)
+- Model identifiers and versions
 
-### File Structure
+## Project Structure
 
 ```
 VisionVerse/
-├── photo_to_poetry.py    # Main script
-├── config.py              # Configuration file
-├── download_success_test.py  # BLIP model test script
-├── random_words.txt       # Word bank for semantic matching
-├── art_style.txt          # List of art styles
-├── requirements.txt       # Python dependencies
-├── README.md             # This file
-├── LICENSE               # License file
-├── .gitignore            # Git ignore rules
-└── output/               # Generated images and logs
+├── src/
+│   ├── __init__.py
+│   ├── main.py                 # Entry point
+│   └── photo_to_poetry.py      # Core pipeline implementation
+├── config/
+│   └── config.py               # Configuration management
+├── data/
+│   ├── art_style.txt           # Art style definitions
+│   └── random_words.txt        # Semantic word bank
+├── output/                     # Generated artifacts (gitignored)
+├── requirements.txt            # Python dependencies
+├── LICENSE                     # MIT License
+└── README.md                   # This file
 ```
 
-## Art Styles
+## Art Style Library
 
-The project includes 100+ art styles spanning from prehistoric art to contemporary digital art, including:
-- Classical: Ancient Greek, Roman, Byzantine
-- Renaissance: Early, High, Northern Renaissance
-- Modern: Impressionism, Cubism, Surrealism
-- Contemporary: Digital Art, AI Art, Cyberpunk Aesthetic
+The system includes 100+ art styles organized by historical periods:
 
-See `art_style.txt` for the complete list.
+- **Classical**: Ancient Greek, Roman, Byzantine, Islamic
+- **Medieval**: Romanesque, Gothic, Byzantine
+- **Renaissance**: Early, High, Northern Renaissance, Mannerism
+- **Modern**: Impressionism, Post-Impressionism, Cubism, Surrealism
+- **Contemporary**: Digital Art, AI Art, Cyberpunk, Vaporwave
 
-## Output
+Complete style definitions available in `data/art_style.txt`.
 
-All generated content is saved in the `output/` directory:
-- `art_<timestamp>.png`: Generated artwork images
-- `ai_art_prompt_<timestamp>.txt`: Complete generation details
-- `ai_art_history.log`: Summary log of all generations
+## Output Format
+
+Generated artifacts are saved with timestamped filenames:
+
+- `output/art_<timestamp>.png`: Synthesized artwork images (768x768)
+- `output/ai_art_prompt_<timestamp>.txt`: Complete generation metadata including:
+  - Original image path
+  - BLIP-generated caption
+  - Semantic keywords
+  - Generated poetry
+  - Stable Diffusion prompt
+  - Output image path
+- `output/ai_art_history.log`: Aggregated generation log
+
+## Technical Details
+
+### Models and Frameworks
+
+- **BLIP**: Bootstrapping Language-Image Pre-training for image captioning
+- **CLIP**: Contrastive Language-Image Pre-training for semantic embeddings
+- **Stable Diffusion**: Latent diffusion model for high-quality image synthesis
+- **Ollama**: Local LLM inference for poetry generation
+
+### Performance Considerations
+
+- **Memory**: Enable attention slicing for reduced VRAM usage (default enabled)
+- **Device Selection**: Automatic device detection (CUDA > MPS > CPU)
+- **Inference**: 40-step diffusion process with guidance scale 8.5
 
 ## Troubleshooting
 
-### Camera Issues
-- Ensure your camera is not being used by another application
-- The script tries cameras 0-2, adjust the range in `capture_image()` if needed
+### Camera Access Issues
+- Ensure camera permissions are granted
+- Verify no other applications are accessing the camera
+- Adjust camera ID range in `capture_image()` if needed
 
-### Model Download Issues
-- Models are downloaded from HuggingFace on first run
-- For regions with access restrictions, uncomment the mirror endpoint in `photo_to_poetry.py`
+### Model Download Failures
+- Models download from HuggingFace on first run
+- For restricted regions, uncomment mirror endpoint in `src/photo_to_poetry.py`
+- Verify network connectivity and HuggingFace access
 
-### Memory Issues
-- Reduce image resolution in `generate_sd_image()` (currently 768x768)
-- Use CPU mode if GPU memory is insufficient
-- Enable attention slicing (already enabled) to reduce memory usage
+### Memory Constraints
+- Reduce image resolution in `generate_sd_image()` (default: 768x768)
+- Use CPU mode for systems with limited GPU memory
+- Adjust `num_inference_steps` for faster generation (lower quality)
 
-### Ollama Issues
-- Ensure Ollama is installed and running
-- Verify the mistral model is downloaded: `ollama list`
+### Ollama Integration
+- Verify Ollama service is running: `ollama list`
+- Ensure Mistral model is installed: `ollama pull mistral`
+- Check Ollama API accessibility
 
 ## License
 
-This project uses several open-source models:
-- Stable Diffusion: [CreativeML Open RAIL-M License](https://huggingface.co/spaces/CompVis/stable-diffusion-license)
+This project is licensed under the MIT License. See LICENSE file for details.
+
+Note: This project uses third-party models with their respective licenses:
+- Stable Diffusion: CreativeML Open RAIL-M License
 - BLIP: Apache 2.0
 - CLIP: MIT License
 
+Refer to individual model repositories for complete license terms.
+
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome. Please ensure code follows existing style conventions and includes appropriate documentation.
 
 ## Acknowledgments
 
 - [Stable Diffusion](https://github.com/Stability-AI/stablediffusion) by Stability AI
-- [BLIP](https://github.com/salesforce/BLIP) by Salesforce
+- [BLIP](https://github.com/salesforce/BLIP) by Salesforce Research
 - [CLIP](https://github.com/openai/CLIP) by OpenAI
-- [Ollama](https://ollama.ai/) for local LLM inference
-
+- [Ollama](https://ollama.ai/) for local LLM inference infrastructure

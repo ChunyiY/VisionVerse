@@ -1,8 +1,8 @@
 # config.py
 import os
 
-# Base directory
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Base directory (project root)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Output directory
 OUTPUT_DIR = os.path.join(BASE_DIR, "output")

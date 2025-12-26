@@ -124,11 +124,11 @@ import os
 # os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
 
 # ====== Configuration ======
-# Get the directory where this script is located
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-WORD_BANK_PATH = os.path.join(BASE_DIR, 'random_words.txt')
+# Get the project root directory (parent of src/)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+WORD_BANK_PATH = os.path.join(BASE_DIR, 'data', 'random_words.txt')
 IMAGE_SAVE_PATH = os.path.join(BASE_DIR, 'captured.jpg')
-ART_STYLE_PATH = os.path.join(BASE_DIR, 'art_style.txt')
+ART_STYLE_PATH = os.path.join(BASE_DIR, 'data', 'art_style.txt')
 OLLAMA_MODEL = "mistral"
 OUTPUT_DIR = os.path.join(BASE_DIR, 'output')
 
@@ -150,23 +150,23 @@ def init_resources():
     try:
         with open(WORD_BANK_PATH, 'r', encoding='utf-8-sig') as f:
             word_bank = [line.strip() for line in f if line.strip()] or ["poetry", "dream", "light", "shadow"]
-        print(f"✅ Loaded {len(word_bank)} words")
+        print(f"Loaded {len(word_bank)} words")
     except Exception as e:
-        print(f"❌ Failed to load word bank: {e}")
+        print(f"Failed to load word bank: {e}")
         word_bank = ["poetry", "dream", "light", "shadow"]
 
     # Load art styles
     try:
         with open(ART_STYLE_PATH, 'r', encoding='utf-8-sig') as f:
             art_styles = [line.strip() for line in f if line.strip()] or ["impressionism", "surrealism", "ukiyo-e", "digital art"]
-        print(f"🎨 Loaded {len(art_styles)} art styles")
+        print(f"Loaded {len(art_styles)} art styles")
     except Exception as e:
-        print(f"❌ Failed to load art styles: {e}")
+        print(f"Failed to load art styles: {e}")
         art_styles = ["impressionism", "surrealism", "ukiyo-e", "digital art"]
     
     # Initialize Stable Diffusion pipeline
     try:
-        print("🔄 Loading Stable Diffusion model...")
+        print("Loading Stable Diffusion model...")
         device = "mps" if torch.backends.mps.is_available() else ("cuda" if torch.cuda.is_available() else "cpu")
         torch_dtype = torch.float32
         
@@ -176,9 +176,9 @@ def init_resources():
         ).to(device)
         
         pipe.enable_attention_slicing()
-        print("✅ Stable Diffusion model loaded successfully")
+        print("Stable Diffusion model loaded successfully")
     except Exception as e:
-        print(f"❌ Failed to load Stable Diffusion model: {e}")
+        print(f"Failed to load Stable Diffusion model: {e}")
         raise
 
 def capture_image(save_path=IMAGE_SAVE_PATH):
@@ -190,9 +190,9 @@ def capture_image(save_path=IMAGE_SAVE_PATH):
             cap.release()
             if ret:
                 cv2.imwrite(save_path, frame)
-                print(f"📸 Image saved: {save_path} (camera {cam_id})")
+                print(f"Image saved: {save_path} (camera {cam_id})")
                 return save_path
-    raise RuntimeError("❌ Failed to capture image")
+    raise RuntimeError("Failed to capture image")
 
 def generate_blip_prompt(image_path):
     """Generate image caption using BLIP"""
@@ -209,7 +209,7 @@ def generate_blip_prompt(image_path):
         out = model.generate(**inputs, max_new_tokens=50)
         return processor.decode(out[0], skip_special_tokens=True)
     except Exception as e:
-        print(f"❌ Failed to generate caption: {e}")
+        print(f"Failed to generate caption: {e}")
         return "a poetic scene"
 
 def encode_text(texts):
@@ -241,7 +241,7 @@ Requirements:
 1. Include all keywords naturally
 2. 8-12 lines with rhythm
 3. Add a creative title"""
-    print("\n📝 Poetry prompt:\n" + prompt)
+    print("\nPoetry prompt:\n" + prompt)
     return prompt
 
 def generate_with_ollama(model, prompt, timeout=120):
@@ -255,17 +255,17 @@ def generate_with_ollama(model, prompt, timeout=120):
         )
         return result.stdout.strip() if result.returncode == 0 else None
     except Exception as e:
-        print(f"❌ Failed to generate with {model}: {e}")
+        print(f"Failed to generate with {model}: {e}")
         return None
 
 def add_word_to_bank():
     """Manually add a new word to the word bank"""
-    new_word = input("🔤 Enter a new word to add to the word bank (press Enter to skip): ").strip()
+    new_word = input("Enter a new word to add to the word bank (press Enter to skip): ").strip()
     if new_word:
         with open(WORD_BANK_PATH, 'a', encoding='utf-8') as f:
             f.write(f"\n{new_word}")
         word_bank.append(new_word)
-        print(f"✅ New word '{new_word}' added to word bank")
+        print(f"New word '{new_word}' added to word bank")
 
 
 def poem_to_diffusion_prompt(poem):
@@ -283,7 +283,7 @@ def poem_to_diffusion_prompt(poem):
     3. Include all key elements from the poem
     """
     
-    print(f"\n🎨 Final prompt (enforcing {selected_style} style):\n{prompt}")
+    print(f"\nFinal prompt (enforcing {selected_style} style):\n{prompt}")
     return prompt.strip()
 
 
@@ -311,7 +311,7 @@ def generate_sd_image(prompt):
     timestamp = int(time.time())
     output_path = os.path.join(OUTPUT_DIR, f"art_{timestamp}.png")
     
-    print(f"\n🎨 Generating image with Stable Diffusion...")
+    print(f"\nGenerating image with Stable Diffusion...")
     print(f"Prompt: {prompt}")
     
     try:
@@ -351,7 +351,7 @@ def save_results(image_path, caption, keywords, poem, sd_prompt, art_path=None):
         f.write(f"Poem:\n{poem}\n\n")
         f.write(f"Stable Diffusion Prompt:\n{sd_prompt}\n")
         if art_path:
-            f.write(f"\n🖼️ Generated Image Location: {art_path}")
+            f.write(f"\nGenerated Image Location: {art_path}")
     
     print(f"Results saved to: {output_path}")
     
@@ -368,24 +368,24 @@ if __name__ == "__main__":
         # 1. Capture and describe image
         image_path = capture_image()
         caption = generate_blip_prompt(image_path)
-        print(f"🧠 Image Caption: {caption}")
+        print(f"Image Caption: {caption}")
         
         # 2. Generate poetry
         keywords = get_semantic_words(caption, word_bank, k=4)
-        print(f"🎯 Semantically Matched Keywords: {keywords}")
+        print(f"Semantically Matched Keywords: {keywords}")
         poem = generate_with_ollama(OLLAMA_MODEL, compose_poetry_instruction(caption, keywords))
-        print(f"\n✍️ Poem:\n{poem}")
+        print(f"\nPoem:\n{poem}")
         
         # 3. Convert to prompt
         sd_prompt = poem_to_diffusion_prompt(poem)
-        print(f"\n🎨 Prompt:\n{sd_prompt}")
+        print(f"\nPrompt:\n{sd_prompt}")
         
         # 4. Generate image using Stable Diffusion
         art_path = generate_sd_image(sd_prompt)
         
         # 5. Save results
         save_results(image_path, caption, keywords, poem, sd_prompt, art_path)
-        print(f"\n✅ Results saved to {OUTPUT_DIR}")
+        print(f"\nResults saved to {OUTPUT_DIR}")
         
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
